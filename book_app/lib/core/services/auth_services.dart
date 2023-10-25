@@ -9,6 +9,14 @@ abstract class AuthServivecInterface {
 }
 
 class AuthServices extends AuthServivecInterface {
+  static final AuthServices _singleton = AuthServices._internal();
+
+  factory AuthServices() {
+    return _singleton;
+  }
+
+  AuthServices._internal();
+
   @override
   Future<AuthResp> login(User user) async {
     final body = {
@@ -16,7 +24,6 @@ class AuthServices extends AuthServivecInterface {
       "contrasenia": user.pass,
     };
     final dio = Dio();
-    late AuthResp authResp;
     late Response resp;
     try {
       resp = await dio.post(

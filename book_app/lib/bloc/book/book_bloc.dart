@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:bloc/bloc.dart';
 import 'package:book_app/core/services/book_services.dart';
 import 'package:equatable/equatable.dart';
@@ -28,7 +26,10 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       emit(state.copyWith(loadingBooks: true));
       List<Book> books =
           await BookService().getBooks(state.searchData, state.filter);
-      emit(state.copyWith(books: books, loadingBooks: false));
+
+      emit(state.copyWith(
+          success: books.isNotEmpty && books[0].statusCode == 200));
+      emit(state.copyWith(books: books, loadingBooks: false, success: false));
     });
 
     on<RestoreBooks>((event, emit) => emit(const BookState()));
@@ -44,7 +45,11 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         emit(state.copyWith(loadingCreate: true));
         int resp = await BookService()
             .createBook(state.newBookTitle, state.newBookAutor);
+
+        emit(state.copyWith(success: resp == 200));
+
         emit(state.copyWith(
+            success: false,
             loadingCreate: false,
             newBookAutor: resp == 200 ? '' : null,
             newBookTitle: resp == 200 ? '' : null));
@@ -72,16 +77,20 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       emit(state.copyWith(loadingLend: true));
       int resp =
           await BookService().lendBook(state.lendBookId, state.lendUserId);
+      emit(state.copyWith(success: resp == 200));
       emit(state.copyWith(
-          lendBookId: resp == 200 ? 0 : null,
-          lendUserId: resp == 200 ? 0 : null,
-          loadingLend: false));
+        lendBookId: resp == 200 ? 0 : null,
+        lendUserId: resp == 200 ? 0 : null,
+        loadingLend: false,
+        success: false,
+      ));
     });
 
     on<ReturnBook>((event, emit) async {
       emit(state.copyWith(loadingReturn: true));
       int resp =
           await BookService().returnBook(state.lendBookId, state.lendUserId);
+      emit(state.copyWith(success: resp == 200));
       emit(state.copyWith(
           lendBookId: resp == 200 ? 0 : null,
           lendUserId: resp == 200 ? 0 : null,

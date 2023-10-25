@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../bloc/book/book_bloc.dart';
 import '../../../../style/style.dart';
-import 'search_book.dart';
+import 'widgets.dart';
 
 void lendBookModal(BuildContext context, Size size) {
   var bloc = BlocProvider.of<BookBloc>(context);
@@ -48,7 +48,7 @@ void lendBookModal(BuildContext context, Size size) {
                   ),
                   Column(
                     children: [
-                      SearchBook(
+                      BookTextField(
                         size: size,
                         onChanged: (value) => BlocProvider.of<BookBloc>(context)
                             .add(LendUser(int.parse(value))),
@@ -56,7 +56,7 @@ void lendBookModal(BuildContext context, Size size) {
                         pass: true,
                         format: true,
                       ),
-                      SearchBook(
+                      BookTextField(
                         size: size,
                         onChanged: (value) => BlocProvider.of<BookBloc>(context)
                             .add(LendBookId(int.parse(value))),
@@ -164,7 +164,7 @@ void returnBookModal(BuildContext context, Size size) {
                   ),
                   Column(
                     children: [
-                      SearchBook(
+                      BookTextField(
                         size: size,
                         onChanged: (value) => BlocProvider.of<BookBloc>(context)
                             .add(LendUser(int.parse(value))),
@@ -172,7 +172,7 @@ void returnBookModal(BuildContext context, Size size) {
                         pass: true,
                         format: true,
                       ),
-                      SearchBook(
+                      BookTextField(
                         size: size,
                         onChanged: (value) => BlocProvider.of<BookBloc>(context)
                             .add(LendBookId(int.parse(value))),

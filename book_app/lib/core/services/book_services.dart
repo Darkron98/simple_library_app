@@ -16,7 +16,15 @@ abstract class BookServiceInterface {
 }
 
 class BookService extends BookServiceInterface {
+  static final BookService _singleton = BookService._internal();
   Preferences preferences = Preferences();
+
+  factory BookService() {
+    return _singleton;
+  }
+
+  BookService._internal();
+
   @override
   Future<List<Book>> getBooks(String searchData, bool filter) async {
     final dio = Dio();
@@ -35,6 +43,7 @@ class BookService extends BookServiceInterface {
               id: e["id_libro"],
               title: e["titulo"],
               autor: e["autor"],
+              statusCode: resp.statusCode ?? 400,
             ),
           )
           .toList();

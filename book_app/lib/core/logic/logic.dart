@@ -2,12 +2,26 @@ import 'package:book_app/style/color/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:remixicon/remixicon.dart';
 
+import '../../bloc/register/register_bloc.dart';
+
 Map<String, String> headers(String token) => {
       "Content-Type": "application/json",
       'Authorization': 'Bearer $token',
     };
 
 String dateParse(DateTime date) => "${date.year}/${date.month}/${date.day}";
+
+bool validateUserRegister(RegisterState data) {
+  return data.name.isEmpty ||
+      data.lastName.isEmpty ||
+      data.password.isEmpty ||
+      data.confirmationPass.isEmpty ||
+      data.userName.isEmpty ||
+      (data.password != data.confirmationPass &&
+          data.password.isNotEmpty &&
+          data.confirmationPass.isNotEmpty) ||
+      (data.rol != 1 && data.rol != 2);
+}
 
 bool isInt(String data) {
   try {

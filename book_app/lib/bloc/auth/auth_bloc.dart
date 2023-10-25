@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:book_app/core/preferences/preferences.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 
 import '../../core/model/auth_user.dart';
 import '../../core/services/auth_services.dart';
@@ -12,7 +11,7 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Preferences prefs = Preferences();
 
-  AuthBloc() : super(AuthState()) {
+  AuthBloc() : super(const AuthState()) {
     on<TypeUser>(
       (event, emit) => emit(
         state.copyWith(userName: event.user),
@@ -32,28 +31,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         prefs.token = userLoged.token;
         prefs.rol = userLoged.rol;
         prefs.userId = userLoged.id;
-        prefs.name = "${userLoged.names} ${userLoged.lastNames}";
+        prefs.name = userLoged.names;
+        prefs.lastName = userLoged.lastNames;
         prefs.user = userLoged.userName;
-        if (userLoged.statusCode == 200) {
-          emit(state.copyWith(
-            loading: false,
-            success: true,
-            failure: false,
-          ));
-        } else {
-          emit(state.copyWith(
-            loading: false,
-            success: false,
-            failure: true,
-          ));
-        }
+        emit(state.copyWith(
+          loading: false,
+          success: userLoged.statusCode == 200,
+          failure: userLoged.statusCode == 400,
+        ));
       },
     );
     on<Restore>(
       (event, emit) => emit(state.copyWith(
         success: false,
         failure: false,
+        userName: '',
+        pass: '',
       )),
+    );
+    on<NewState>(
+      (event, emit) => emit(state.copyWith(changeFlag: !state.changeFlag)),
     );
   }
 }

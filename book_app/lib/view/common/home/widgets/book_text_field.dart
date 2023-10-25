@@ -1,43 +1,47 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remixicon/remixicon.dart';
 
-import '../../../../bloc/auth/auth_bloc.dart';
-import '../../../../bloc/bloc.dart';
+import '../../../../bloc/book/book_bloc.dart';
 import '../../../../style/style.dart';
 
-class LoginFormField extends StatefulWidget {
-  const LoginFormField({
+class BookTextField extends StatefulWidget {
+  const BookTextField({
     super.key,
     required this.size,
     this.pass,
     this.label,
     required this.onChanged,
+    this.format,
   });
   final bool? pass;
   final Size size;
   final String? label;
   final Function(String)? onChanged;
+  final bool? format;
 
   @override
-  _LoginFormFieldState createState() => _LoginFormFieldState(
+  _BookTextFieldState createState() => _BookTextFieldState(
         size: size,
         pass: pass,
         label: label,
         obscure: pass ?? false,
         onChanged: onChanged,
+        format: format,
       );
 }
 
-class _LoginFormFieldState extends State<LoginFormField> {
-  _LoginFormFieldState({
+class _BookTextFieldState extends State<BookTextField> {
+  _BookTextFieldState({
     required this.onChanged,
     required this.size,
     this.pass,
     this.label,
     required this.obscure,
+    this.format,
   });
   final FocusNode _focusNode = FocusNode();
   final bool? pass;
@@ -45,6 +49,7 @@ class _LoginFormFieldState extends State<LoginFormField> {
   final String? label;
   bool obscure = false;
   final Function(String)? onChanged;
+  final bool? format;
   TextEditingController controller = TextEditingController();
 
   @override
@@ -75,30 +80,26 @@ class _LoginFormFieldState extends State<LoginFormField> {
             selectionColor: Color.fromARGB(255, 81, 224, 200),
             selectionHandleColor: ColorPalette.primary),
       ),
-      child: BlocListener<AuthBloc, AuthState>(
-        listenWhen: (previous, current) => current.success || current.failure,
+      child: BlocListener<BookBloc, BookState>(
+        listenWhen: (previus, current) => current.success,
         listener: (context, state) {
-          if (state.success) {
-            controller.clear();
-            if (!(pass ?? false)) {
-              BlocProvider.of<AuthBloc>(context).add(const Restore());
-              BlocProvider.of<BookBloc>(context).add(const RestoreBooks());
-              Navigator.of(context).pushNamed('home');
-            }
-          }
+          controller.clear();
         },
-        child: BlocBuilder<AuthBloc, AuthState>(
+        child: BlocBuilder<BookBloc, BookState>(
           builder: (context, state) => Padding(
             padding: const EdgeInsets.only(
               left: 40,
               right: 40,
               bottom: 15,
             ),
-            child: TextFormField(
+            child: TextField(
               controller: controller,
+              inputFormatters: (format ?? false)
+                  ? [FilteringTextInputFormatter.allow(RegExp("[0-9]"))]
+                  : null,
               textAlign: TextAlign.left,
+              keyboardType: (format ?? false) ? TextInputType.number : null,
               focusNode: _focusNode,
-              obscureText: obscure,
               cursorColor: ColorPalette.textColor,
               cursorWidth: 1.5,
               cursorRadius: const Radius.circular(0.5),
@@ -109,19 +110,41 @@ class _LoginFormFieldState extends State<LoginFormField> {
                     : ColorPalette.unFocused,
               ),
               decoration: InputDecoration(
-                  suffixIcon: pass ?? false
-                      ? IconButton(
-                          splashColor: Colors.transparent,
-                          onPressed: () {
-                            if (pass ?? false) {
-                              obscurePass();
-                            }
-                          },
-                          icon: Icon(
-                            obscure ? Remix.eye_off_line : Remix.eye_line,
-                            size: 22.5,
-                            color: ColorPalette.unFocused,
-                            weight: 0.5,
+                  suffixIcon: !obscure
+                      ? Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: GestureDetector(
+                            onTap: () =>
+                                state.loadingBooks || state.searchData.isEmpty
+                                    ? null
+                                    : BlocProvider.of<BookBloc>(context)
+                                        .add(const SearchBooks()),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: state.loadingBooks ||
+                                          state.searchData.isEmpty
+                                      ? ColorPalette.unFocused
+                                      : ColorPalette.primary,
+                                  borderRadius: BorderRadius.circular(50)),
+                              child: state.loadingBooks && !state.loadingDelete
+                                  ? const Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: SizedBox(
+                                        width: 2,
+                                        height: 2,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2.5,
+                                        ),
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Remix.search_line,
+                                      size: 22.5,
+                                      color: ColorPalette.background,
+                                      weight: 0.5,
+                                    ),
+                            ),
                           ),
                         )
                       : null,

@@ -42,4 +42,10 @@ class Preferences {
   }
 
   String get name => _preferences.getString('name') ?? '0';
+
+  set lastName(String lastName) {
+    _preferences.setString('lastName', lastName);
+  }
+
+  String get lastName => _preferences.getString('lastName') ?? '0';
 }

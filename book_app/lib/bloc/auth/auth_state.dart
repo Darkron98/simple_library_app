@@ -8,6 +8,7 @@ class AuthState extends Equatable {
     this.loading = false,
     this.success = false,
     this.failure = false,
+    this.changeFlag = true,
   }) : user = const User(user: '', pass: '');
 
   final String userName;
@@ -16,6 +17,7 @@ class AuthState extends Equatable {
   final bool loading;
   final bool success;
   final bool failure;
+  final bool changeFlag;
 
   AuthState copyWith({
     String? userName,
@@ -24,6 +26,7 @@ class AuthState extends Equatable {
     bool? loading,
     bool? success,
     bool? failure,
+    bool? changeFlag,
   }) =>
       AuthState(
         userName: userName ?? this.userName,
@@ -32,6 +35,7 @@ class AuthState extends Equatable {
         loading: loading ?? this.loading,
         success: success ?? this.success,
         failure: failure ?? this.failure,
+        changeFlag: changeFlag ?? this.changeFlag,
       );
 
   @override
@@ -42,5 +46,6 @@ class AuthState extends Equatable {
         loading,
         success,
         failure,
+        changeFlag,
       ];
 }

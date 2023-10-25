@@ -15,6 +15,7 @@ class BookState extends Equatable {
     this.lendBookId = 0,
     this.deleteBookId = 0,
     this.books = const [],
+    this.success = false,
   });
 
   final bool filter;
@@ -23,6 +24,7 @@ class BookState extends Equatable {
   final bool loadingReturn;
   final bool loadingCreate;
   final bool loadingDelete;
+  final bool success;
   final String searchData;
   final String newBookTitle;
   final String newBookAutor;
@@ -38,6 +40,7 @@ class BookState extends Equatable {
     bool? loadingReturn,
     bool? loadingCreate,
     bool? loadingDelete,
+    bool? success,
     String? searchData,
     String? newBookAutor,
     String? newBookTitle,
@@ -53,6 +56,7 @@ class BookState extends Equatable {
         loadingReturn: loadingReturn ?? this.loadingReturn,
         loadingCreate: loadingCreate ?? this.loadingCreate,
         loadingDelete: loadingDelete ?? this.loadingDelete,
+        success: success ?? this.success,
         searchData: searchData ?? this.searchData,
         books: books ?? this.books,
         newBookAutor: newBookAutor ?? this.newBookAutor,
@@ -70,6 +74,7 @@ class BookState extends Equatable {
         loadingReturn,
         loadingCreate,
         loadingDelete,
+        success,
         searchData,
         newBookAutor,
         newBookTitle,

@@ -1,43 +1,46 @@
-// ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remixicon/remixicon.dart';
 
-import '../../../../bloc/auth/auth_bloc.dart';
 import '../../../../bloc/bloc.dart';
+import '../../../../bloc/register/register_bloc.dart';
 import '../../../../style/style.dart';
 
-class LoginFormField extends StatefulWidget {
-  const LoginFormField({
+class RegisterFormField extends StatefulWidget {
+  const RegisterFormField({
     super.key,
     required this.size,
     this.pass,
     this.label,
     required this.onChanged,
+    this.format,
   });
   final bool? pass;
   final Size size;
   final String? label;
   final Function(String)? onChanged;
+  final bool? format;
 
   @override
-  _LoginFormFieldState createState() => _LoginFormFieldState(
+  _RegisterFormFieldState createState() => _RegisterFormFieldState(
         size: size,
         pass: pass,
         label: label,
         obscure: pass ?? false,
         onChanged: onChanged,
+        format: format,
       );
 }
 
-class _LoginFormFieldState extends State<LoginFormField> {
-  _LoginFormFieldState({
+class _RegisterFormFieldState extends State<RegisterFormField> {
+  _RegisterFormFieldState({
     required this.onChanged,
     required this.size,
     this.pass,
     this.label,
     required this.obscure,
+    this.format,
   });
   final FocusNode _focusNode = FocusNode();
   final bool? pass;
@@ -45,6 +48,7 @@ class _LoginFormFieldState extends State<LoginFormField> {
   final String? label;
   bool obscure = false;
   final Function(String)? onChanged;
+  final bool? format;
   TextEditingController controller = TextEditingController();
 
   @override
@@ -57,7 +61,7 @@ class _LoginFormFieldState extends State<LoginFormField> {
   }
 
   void obscurePass() {
-    obscure = !obscure;
+    this.obscure = !this.obscure;
     setState(() {});
   }
 
@@ -75,27 +79,22 @@ class _LoginFormFieldState extends State<LoginFormField> {
             selectionColor: Color.fromARGB(255, 81, 224, 200),
             selectionHandleColor: ColorPalette.primary),
       ),
-      child: BlocListener<AuthBloc, AuthState>(
-        listenWhen: (previous, current) => current.success || current.failure,
+      child: BlocListener<RegisterBloc, RegisterState>(
+        listenWhen: (previous, current) => current.success,
         listener: (context, state) {
           if (state.success) {
             controller.clear();
-            if (!(pass ?? false)) {
-              BlocProvider.of<AuthBloc>(context).add(const Restore());
-              BlocProvider.of<BookBloc>(context).add(const RestoreBooks());
-              Navigator.of(context).pushNamed('home');
-            }
           }
         },
-        child: BlocBuilder<AuthBloc, AuthState>(
+        child: BlocBuilder<RegisterBloc, RegisterState>(
           builder: (context, state) => Padding(
-            padding: const EdgeInsets.only(
-              left: 40,
-              right: 40,
-              bottom: 15,
-            ),
-            child: TextFormField(
+            padding: const EdgeInsets.only(left: 40, right: 40, bottom: 15),
+            child: TextField(
               controller: controller,
+              inputFormatters: (format ?? false)
+                  ? [FilteringTextInputFormatter.allow(RegExp("[1-2]"))]
+                  : null,
+              keyboardType: (format ?? false) ? TextInputType.number : null,
               textAlign: TextAlign.left,
               focusNode: _focusNode,
               obscureText: obscure,

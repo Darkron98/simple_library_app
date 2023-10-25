@@ -36,3 +36,10 @@ class Restore extends AuthEvent {
   @override
   List<Object> get props => [];
 }
+
+class NewState extends AuthEvent {
+  const NewState();
+
+  @override
+  List<Object> get props => [];
+}

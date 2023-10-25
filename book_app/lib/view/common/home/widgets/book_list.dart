@@ -1,12 +1,10 @@
+import 'package:book_app/core/preferences/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:remixicon/remixicon.dart';
 
 import '../../../../bloc/book/book_bloc.dart';
-import '../../../../core/preferences/preferences.dart';
 import '../../../../style/style.dart';
-
-import 'lend_return_book.dart';
 
 class BookList extends StatelessWidget {
   const BookList({
@@ -56,31 +54,34 @@ class BookList extends StatelessWidget {
                           state.books[i].id.toString(),
                           style: const TextStyle(color: ColorPalette.greyText),
                         ),
-                        trailing: GestureDetector(
-                          onTap: () {
-                            if (!state.loadingDelete) {
-                              BlocProvider.of<BookBloc>(context)
-                                  .add(DeleteBook(state.books[i].id));
-                            }
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            child: state.loadingDelete &&
-                                    state.books[i].id == state.deleteBookId
-                                ? const Padding(
-                                    padding: EdgeInsets.all(0),
-                                    child: SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: ColorPalette.primary,
-                                        strokeWidth: 2.5,
-                                      ),
-                                    ),
-                                  )
-                                : const Icon(Remix.delete_bin_7_line),
-                          ),
-                        ),
+                        trailing: preferences.rol == 2
+                            ? GestureDetector(
+                                onTap: () {
+                                  if (!state.loadingDelete) {
+                                    BlocProvider.of<BookBloc>(context)
+                                        .add(DeleteBook(state.books[i].id));
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  child: state.loadingDelete &&
+                                          state.books[i].id ==
+                                              state.deleteBookId
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(0),
+                                          child: SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(
+                                              color: ColorPalette.primary,
+                                              strokeWidth: 2.5,
+                                            ),
+                                          ),
+                                        )
+                                      : const Icon(Remix.delete_bin_7_line),
+                                ),
+                              )
+                            : null,
                       ),
                     ),
                   ),

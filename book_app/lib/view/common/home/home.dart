@@ -33,7 +33,7 @@ class Home extends StatelessWidget {
                   SizedBox(height: size.height * 0.15),
                   Column(
                     children: [
-                      SearchBook(
+                      BookTextField(
                         size: size,
                         onChanged: (value) => BlocProvider.of<BookBloc>(context)
                             .add(SearchData(value)),

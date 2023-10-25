@@ -48,14 +48,14 @@ void createBookModal(BuildContext context, Size size) {
                   ),
                   Column(
                     children: [
-                      SearchBook(
+                      BookTextField(
                         size: size,
                         onChanged: (value) => BlocProvider.of<BookBloc>(context)
                             .add(NewBookTitle(value)),
                         label: 'Titulo',
                         pass: true,
                       ),
-                      SearchBook(
+                      BookTextField(
                         size: size,
                         onChanged: (value) => BlocProvider.of<BookBloc>(context)
                             .add(NewBookAutor(value)),
